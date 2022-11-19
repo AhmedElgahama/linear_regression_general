@@ -1,0 +1,119 @@
+#!/usr/bin/env Rscript
+
+## ---- Initialising libraries ----
+library(ggplot2)
+library(tibble)
+library(tidyr)
+library(readr)
+library(purrr)
+library(dplyr)
+library(stringr)
+library(lubridate)
+library(plotly)
+library(glue)
+library(zeallot)
+library(pROC)
+library(forcats)
+library(rjson)
+library(caTools)
+options(dplyr.summarise.inform = FALSE)
+
+## Script that holp helper functions
+source('algorithm/0.common_funcs.R')
+
+
+## Get the training data file
+data   <-
+  glue(
+    '/opt/ml_vol/inputs/data/testing/binaryClassificationBaseMainInput/',
+    list.files(path = "/opt/ml_vol/inputs/data/testing/binaryClassificationBaseMainInput")
+  )
+
+# data   <-"D:/ready tensor/rt_benchmark_datasets-main/regression_base/auto_prices/auto_prices_test.csv"
+
+
+tester <- function(data_path)
+{
+  ## Load model and test data
+  trained_model         <- read_rds('D:/ready tensor/rt_benchmark_datasets-main/regression_base/auto_prices/model.rds')
+  variables_to_encode   <- trained_model$variables_to_encode
+  id_column             <- trained_model$id_column
+  exp_vars              <- trained_model$exp_vars
+  encodings             <- trained_model$encodings
+  encoding_outputs       <- trained_model$encoding_outputs
+  variables_numeric     <- trained_model$variables_numeric
+  df_test             <- read_csv(data_path)
+  
+  
+  id <- df_test %>% select(id_column)
+  
+
+  
+  df_test[variables_to_encode] <-
+    sapply(df_test[variables_to_encode], as.character)
+  df_test[variables_numeric]   <-
+    sapply(df_test[variables_numeric], as.numeric)
+  
+  
+  full_data_numeric <- df_test %>%
+    select(-id_column,-variables_to_encode)
+  full_data_numeric <- as.data.frame(scale(full_data_numeric))
+  
+  
+  
+  if(length(variables_to_encode) != 0)
+  {
+    full_data_categorical <-
+      df_test  %>% select(variables_to_encode) 
+    
+    full_data_categorical <- data.frame(predict(encodings, newdata=full_data_categorical))
+    for(i in encoding_outputs) {
+      if(i %in% full_data_categorical %>% colnames()){
+        invisible()
+        
+      } else {
+        full_data_categorical <- full_data_categorical %>% 
+          mutate(missing_column = 0) 
+        colnames(full_data_categorical)[colnames(full_data_categorical) == "missing_column"] = i
+      }
+    }
+    
+    
+    df_test <-
+      cbind(id, full_data_numeric, full_data_categorical)
+    
+  } else{
+    df_test <-
+      cbind(id, full_data_numeric)
+    
+  }
+  
+  
+  model <- trained_model$mdl
+  
+  ## Getting probability of each row for the target_class
+  test_results <-
+    tester_func(mdl = model,
+                test_set = df_test,
+                feature_names = exp_vars)
+  
+  test_results <- test_results$test_predictions
+  
+  ## Saving ids with prediction
+  predictions <- cbind(id, test_results)
+  predictions %>% write.csv('D:/ready tensor/rt_benchmark_datasets-main/regression_base/auto_prices/test_predictions.csv')
+}
+
+
+
+tryCatch(               
+  
+  # Specifying expression
+  expr = {                     
+    tester(data)
+  },
+  # Specifying error message
+  error = function(e){         
+    write(e %>% as.character(),file="D:/ready tensor/rt_benchmark_datasets-main/regression_base/auto_prices/test_failure.txt",append=FALSE)
+  }
+)
