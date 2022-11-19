@@ -40,10 +40,6 @@ data   <-
 
 
 
-# data   <-
-  # "D:/ready tensor/rt_benchmark_datasets-main/regression_base/auto_prices/auto_prices_train.csv"
-# schema <-
-  # "D:/ready tensor/rt_benchmark_datasets-main/regression_base/auto_prices/auto_prices_schema.json"
 
 trainer <- function(schema_path, data_path)
 {
