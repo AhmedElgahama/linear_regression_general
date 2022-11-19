@@ -19,12 +19,6 @@ RUN R -e \
     
 RUN R -e \
     "install.packages( \
-        c('xgboost'), \
-        repos = 'http://cran.us.r-project.org' \
-    )"
-    
-RUN R -e \
-    "install.packages( \
         readLines('requirements.txt'), \
         repos = 'http://cran.us.r-project.org' \
     )"
