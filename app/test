@@ -29,8 +29,6 @@ data   <-
     list.files(path = "/opt/ml_vol/inputs/data/testing/binaryClassificationBaseMainInput")
   )
 
-# data   <-"D:/ready tensor/rt_benchmark_datasets-main/regression_base/auto_prices/auto_prices_test.csv"
-
 
 tester <- function(data_path)
 {
