@@ -1,30 +1,5 @@
 
 
-## Example for testing
-# test_json_string <-
-#   '{
-#       "gender" : "Male" ,
-#       "SeniorCitizen" : 0 ,
-#       "Partner" : "Yes" ,
-#       "Dependents" : "Yes" ,
-#       "tenure" : 70  ,
-#       "PhoneService" : "Yes" ,
-#       "MultipleLines" : "Yes",
-#       "InternetService" : "No" ,
-#       "OnlineSecurity" : "No internet service" ,
-#       "OnlineBackup" :  "No internet service" ,
-#       "DeviceProtection": "No internet service" ,
-#       "TechSupport" : "No internet service",
-#       "StreamingTV" : "No internet service",
-#       "StreamingMovies" : "No internet service",
-#       "Contract" : "Two year",
-#       "PaperlessBilling" : "No",
-#       "PaymentMethod" : "Mailed check",
-#       "MonthlyCharges" : 25.4,
-#       "TotalCharges" : 1782.05
-# }'
-
-
 ## ---- Initialising libraries ----
 suppressWarnings(suppressMessages(library(tidyverse)))
 suppressWarnings(suppressMessages(library(lubridate)))
