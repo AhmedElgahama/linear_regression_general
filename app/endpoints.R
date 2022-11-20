@@ -16,9 +16,6 @@ encodings             <- trained_model$encodings
 encoding_outputs      <- trained_model$encoding_outputs
 variables_numeric     <- trained_model$variables_numeric
 id_column             <- trained_model$id_column
-threshold <- 0.50
-
-
 
 
 prediction_scorer <- function(row) {
