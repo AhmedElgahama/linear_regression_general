@@ -54,7 +54,9 @@ tester <- function(data_path)
   
   
   full_data_numeric <- df_test %>%
-    select(-id_column,-variables_to_encode)
+    select(-id_column,-variables_to_encode) %>%
+    mutate(across(everything(), ~ replace_na(.x, calc_mode(.x))))
+  
   full_data_numeric <- as.data.frame(scale(full_data_numeric))
   
   
@@ -62,7 +64,8 @@ tester <- function(data_path)
   if(length(variables_to_encode) != 0)
   {
     full_data_categorical <-
-      df_test  %>% select(variables_to_encode) 
+      df_test  %>% select(variables_to_encode) %>%
+      mutate(across(everything(), ~ replace_na(.x, calc_mode(.x))))
     
     full_data_categorical <- data.frame(predict(encodings, newdata=full_data_categorical))
     for(i in encoding_outputs) {
