@@ -120,6 +120,7 @@ trainer <- function(schema_path, data_path)
   } else{
     full_data_categorical <- NULL
     encodings <- NULL
+    encoding_outputs <- NULL
     exp_vars <- full_data_numeric %>% colnames()
     full_data <-
       cbind(id, full_data_numeric, target)
