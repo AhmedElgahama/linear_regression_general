@@ -1,7 +1,6 @@
 #!/usr/bin/env Rscript
 
 ## ---- Initialising libraries ----
-library(ggplot2)
 library(tibble)
 library(tidyr)
 library(readr)
@@ -9,7 +8,6 @@ library(purrr)
 library(dplyr)
 library(stringr)
 library(lubridate)
-library(plotly)
 library(glue)
 library(zeallot)
 library(pROC)
@@ -25,8 +23,8 @@ source('algorithm/0.common_funcs.R')
 ## Get the training data file
 data   <-
   glue(
-    '/opt/ml_vol/inputs/data/testing/binaryClassificationBaseMainInput/',
-    list.files(path = "/opt/ml_vol/inputs/data/testing/binaryClassificationBaseMainInput")
+    '/opt/ml_vol/inputs/data/testing/regressionBaseMainInput/',
+    list.files(path = "/opt/ml_vol/inputs/data/testing/regressionBaseMainInput")
   )
 
 
