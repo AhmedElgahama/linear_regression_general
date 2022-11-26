@@ -50,14 +50,17 @@ tester <- function(data_path)
   df_test[variables_numeric]   <-
     sapply(df_test[variables_numeric], as.numeric)
   
-  
-  full_data_numeric <- df_test %>%
-    select(-id_column,-variables_to_encode) %>%
+  df_test_n <- df_test %>% select(variables_numeric) %>% na_mean(option = "mean")
+  df_test_n <- as.data.frame(scale(df_test_n))
+  df_test_c <- df_test %>% select(variables_to_encode) %>%
     mutate(across(everything(), ~ replace_na(.x, calc_mode(.x))))
   
-  full_data_numeric <- as.data.frame(scale(full_data_numeric))
+  df_test <- cbind(id,df_test_n,df_test_c)
   
   
+  
+  full_data_numeric <- df_test %>%
+    select(-id_column,-variables_to_encode)
   
   if(length(variables_to_encode) != 0)
   {
@@ -67,7 +70,8 @@ tester <- function(data_path)
     
     full_data_categorical <- data.frame(predict(encodings, newdata=full_data_categorical))
     for(i in encoding_outputs) {
-      if(i %in% full_data_categorical %>% colnames()){
+      l = full_data_categorical %>% colnames() %>% as.list()
+      if(i %in% l){
         invisible()
         
       } else {
