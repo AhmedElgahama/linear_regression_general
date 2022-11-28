@@ -79,6 +79,24 @@ trainer <- function(schema_path, data_path)
   
   full_data <-
     read_csv(data_path) %>% drop_na(target_column)
+    
+  ## Remove columns with more than 40% null
+  full_data <- full_data[, which(colMeans(!is.na(full_data)) > 0.4)]
+  
+  ## Remove columns with one unique value
+  same <- sapply(full_data, function(.col){
+    all(is.na(.col))  || all(.col[1L] == .col)
+  })
+  full_data <- full_data[!same]
+  
+  
+  
+  
+  coloumns <- full_data %>% colnames()
+  
+  exp_vars            <- intersect(coloumns,exp_vars)
+  variables_to_encode <- intersect(coloumns,variables_to_encode)
+  variables_numeric   <- intersect(coloumns,variables_numeric)
   
   ## Changing datatype of categorical and numeric variables as received from json file
   full_data[variables_to_encode] <-
