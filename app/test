@@ -44,7 +44,7 @@ tester <- function(data_path)
   id <- df_test %>% select(id_column)
   
 
-  
+  df_test <- df_test[, which(colMeans(!is.na(df_test)) > 0.4)]
   df_test[variables_to_encode] <-
     sapply(df_test[variables_to_encode], as.character)
   df_test[variables_numeric]   <-
@@ -57,10 +57,24 @@ tester <- function(data_path)
   
   df_test <- cbind(id,df_test_n,df_test_c)
   
+  same <- sapply(df_test, function(.col){
+    all(is.na(.col))  || all(.col[1L] == .col)
+  })
   
+  
+  same <- df_test[same] %>% colnames() %>% as.list()
+  
+  
+  for(i in same){
+    if(i %in% variables_numeric){
+      df_test[5,i] = 999
+    }else{
+      df_test[5,i] = "999"
+    }
+  }
   
   full_data_numeric <- df_test %>%
-    select(-id_column,-variables_to_encode)
+    select(variables_numeric)
   
   if(length(variables_to_encode) != 0)
   {
@@ -91,6 +105,8 @@ tester <- function(data_path)
     
   }
   
+  df_test <- df_test %>%
+  mutate(across(everything(), ~ replace_na(.x,0)))
   
   model <- trained_model$mdl
   
