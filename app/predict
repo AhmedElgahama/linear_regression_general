@@ -63,7 +63,7 @@ tester <- function(data_path)
   })
   
   
-  same <- df_test[same] %>% colnames() %>% as.list()
+  same <- df_test[same,] %>% colnames() %>% as.list()
   
   
   for(i in same){
