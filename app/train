@@ -87,8 +87,10 @@ trainer <- function(schema_path, data_path)
   same <- sapply(full_data, function(.col){
     all(is.na(.col))  || all(.col[1L] == .col)
   })
-  full_data <- full_data[!same]
   
+  if(isTRUE(same)){
+  full_data <- full_data[!same]
+  }
   
   
   
