@@ -67,11 +67,13 @@ prediction_scorer <- function(row) {
 
 
 #* @post /infer
+#* @serializer json list(auto_unbox=TRUE)
 function(req) {
   ## grab the request body 'req' and put it into the variable 'row'
   row <- jsonlite::fromJSON(req$postBody) %>% as_tibble()
   row %>% glimpse()
   
+  ids <- row %>% select(id_column)
   ## placeholder for JSON string to be printed at the end
   result <-
     tibble(
@@ -104,8 +106,11 @@ function(req) {
     
   }
   
-  c(result$prediction,
-    result$warnings)
+    Data <-list(predictions = prediction)
+    dataFrame <- as.data.frame(Data)
+    dataFrame <- cbind(ids,dataFrame)
+    split(dataFrame, 1:nrow(dataFrame)) %>% unname()
+ 
 }
 
 }
