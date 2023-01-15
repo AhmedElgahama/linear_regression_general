@@ -15,6 +15,7 @@ exp_vars              <- trained_model$exp_vars
 encodings             <- trained_model$encodings
 encoding_outputs      <- trained_model$encoding_outputs
 variables_numeric     <- trained_model$variables_numeric
+scale_func            <- trained_model$scale_func
 id_column             <- trained_model$id_column
 
 
@@ -23,6 +24,9 @@ prediction_scorer <- function(row) {
   
   ## initialize scores
   score  <- 0
+  
+  full_data_numeric <- row %>% select(variables_numeric)
+  full_data_numeric <- predict(scale_func, as.data.frame(full_data_numeric))
   
   ## Encode categorical features with number of training encoding
   if(length(variables_to_encode) != 0)
