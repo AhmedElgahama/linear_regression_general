@@ -15,6 +15,8 @@ library(forcats)
 library(imputeTS)
 library(rjson)
 library(caTools)
+library(caret)
+
 options(dplyr.summarise.inform = FALSE)
 
 ## Script that holp helper functions
@@ -39,6 +41,7 @@ tester <- function(data_path)
   encodings             <- trained_model$encodings
   encoding_outputs       <- trained_model$encoding_outputs
   variables_numeric     <- trained_model$variables_numeric
+  scale_func            <- trained_model$scale_func
   df_test             <- read_csv(data_path)
   
   
@@ -52,7 +55,9 @@ tester <- function(data_path)
     sapply(df_test[variables_numeric], as.numeric)
   
   df_test_n <- df_test %>% select(variables_numeric) %>% na_mean(option = "mean")
-  df_test_n <- as.data.frame(scale(df_test_n))
+  #df_test_n <- as.data.frame(scale(df_test_n))
+  df_test_n <- predict(scale_func, as.data.frame(df_test_n))
+  
   df_test_c <- df_test %>% select(variables_to_encode) %>%
     mutate(across(everything(), ~ replace_na(.x, calc_mode(.x))))
   
