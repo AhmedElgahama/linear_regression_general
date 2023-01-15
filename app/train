@@ -15,6 +15,7 @@ library(forcats)
 library(rjson)
 library(caTools)
 library(imputeTS)
+library(caret)
 
 options(dplyr.summarise.inform = FALSE)
 
@@ -115,7 +116,10 @@ trainer <- function(schema_path, data_path)
   full_data_numeric <-
     full_data %>% select(variables_numeric) %>% na_mean(option = "mean")
   
-  full_data_numeric <- as.data.frame(scale(full_data_numeric))
+  #full_data_numeric <- as.data.frame(scale(full_data_numeric))
+  scale_func <- preProcess(as.data.frame(full_data_numeric), method=c("range"))
+  full_data_numeric <- predict(scale_func, as.data.frame(full_data_numeric))
+  
   
   
   if (length(variables_to_encode) != 0)
@@ -179,6 +183,7 @@ trainer <- function(schema_path, data_path)
   trained_model$encodings <- encodings
   trained_model$encoding_outputs <- encoding_outputs
   trained_model$variables_numeric <- variables_numeric
+  trained_model$scale_func <- scale_func
   trained_model %>% write_rds(
     '/opt/ml_vol/model/artifacts/model.rds'
   )
